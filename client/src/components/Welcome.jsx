@@ -1,26 +1,43 @@
-import React from "react";
+import React, { useContext } from "react";
 import { BsInfoCircle } from "react-icons/bs";
 import { SiEthereum } from "react-icons/si";
 import Loader from "./Loader";
+import { TransactionContext } from "../context/TransactionContext";
+import { Input } from "../fragments/InputField";
 
 const commonStyles =
   "min-h-[70px] sm:px-0 px-2 sm:min-w-[120px] flex justify-center items-center border-[0.5px] border-gray-400 text-sm font-light text-white";
 
-const Input = ({ placeholder, name, type, value, handlechange }) => (
-  <input
-    placeholder={placeholder}
-    name={name}
-    type={type}
-    step="0.0001"
-    value={value}
-    onChange={(e) => handlechange}
-    className="my-2 w-full rounded-sm p-2 outline-none bg-transparent text-white border-none text-sm white-glassmorphism"
-  />
-);
-
 const Welcome = () => {
-  const handleSubmit = () => {}; 
-  const connectWallet = () => {};
+  const { wallet, addr, formData, handleChange, sendTransaction } =
+    useContext(TransactionContext);
+  let button = null;
+  if (!addr.length) {
+    button = (
+      <button
+        type="button"
+        onClick={wallet}
+        className="flex flex-row justify-center   items-center my-5 bg-[#2952e3] p-3 rounded-md cursor-pointer hover:bg-[#2546bd]"
+      >
+        <p className="text-white text-base font-semibold">Connect Wallet</p>
+      </button>
+    );
+  } else {
+    button = (
+      <p className="text-center mt-5 text-gradient font-semibold md:w-9/12 w-11/12 text-ellipsis">
+        You are connected to the Ethereum network.
+      </p>
+    );
+  }
+  const handleSubmit = (e) => {
+    const { addressTo, amount, keyword, message } = formData;
+
+    e.preventDefault();
+
+    if (!addressTo || !amount || !keyword || !message) return;
+
+    sendTransaction();
+  };
   return (
     <div className="flex w-full justify-center items-center">
       <div className="flex mf:flex-row flex-col items-start justify-between md:p-20 py12 px-4">
@@ -33,13 +50,8 @@ const Welcome = () => {
             Explore the crypto world. Buy and sell cryptocurrencies easily on
             Krypt.
           </p>
-          <button
-            type="button"
-            onClick={connectWallet}
-            className="flex flex-row justify-center   items-center my-5 bg-[#2952e3] p-3 rounded-md cursor-pointer hover:bg-[#2546bd]"
-          >
-            <p className="text-white text-base font-semibold">Connect Wallet</p>
-          </button>
+          {button}
+
           <div className="grid sm:grid-cols-3 grid-cols-2 w-full mt-10 mb-8">
             <div className={`rounded-tl-md ${commonStyles}`}>Reliablity</div>
             <div className={`${commonStyles}`}>Security</div>
@@ -59,41 +71,39 @@ const Welcome = () => {
                 <BsInfoCircle fontSize={17} color={"3a3b3c"} />
               </div>
               <div>
-                <p className="text-white font-light text-sm ">
-                  address
-                  {}
+                <p className="text-white font-light text-sm">
+                  {addr.slice(0, 10)}...{addr.slice(-10)}
                 </p>
                 <p className="text-white font-semibold text-lg mt-1">
                   Ethereum Wallet
-                  {}
                 </p>
               </div>
             </div>
           </div>
           <div className="p-5 sm:w-96 w-full flex flex-col justify-start items-center blue-glassmorphism">
             <Input
-              placeholder="Enter your Ethereum address"
-              name="address"
+              placeholder="Address To"
+              name="addressTo"
               type="text"
-              handlechange={() => {}}
+              handleChange={handleChange}
             />
             <Input
               placeholder="Amount (ETH)"
               name="amount"
               type="number"
-              handlechange={() => {}}
+              handleChange={handleChange}
             />
             <Input
-              placeholder="Keyword (GIF)"
+              placeholder="Keyword (Gif)"
               name="keyword"
               type="text"
-              handlechange={() => {}}
+              handleChange={handleChange}
             />
             <Input
-              placeholder="Enter message"
+              placeholder="Enter Message"
               name="message"
               type="text"
-              handlechange={() => {}}
+              handleChange={handleChange}
             />
             <div className="h-[1px] w-full bg-gray-400 my-2" />
             {false ? (
